@@ -65,6 +65,8 @@ CREATE TABLE `requests` (
     `empId` BIGINT UNSIGNED NOT NULL,
     `type` VARCHAR(255) NOT NULL,
     `state` ENUM('pending', 'approved', 'denied') NOT NULL,
+    `fromDate` DATETIME ,
+    `toDate` DATETIME ,
     `Description` VARCHAR(255) NOT NULL
 );
 
@@ -178,9 +180,9 @@ INSERT INTO `dates` (`id`, `issued`, `started`, `finished`, `deadline`, `taskId`
 (5, '2024-02-05 10:00:00', '2024-02-06 09:00:00', '2024-02-28 17:00:00', '2024-03-01 17:00:00', 5);
 
 -- Insert Requests
-INSERT INTO `requests` (`id`, `type`, `name`, `empId`, `Description`, `state`) VALUES
-(1, 'Congé', 'Congé Aïd El Fitr', 1, 'Demande de congé pour les célébrations de l''Aïd avec la famille', 'approved'),
-(2, 'Formation', 'Formation React Advanced', 2, 'Demande de participation à la formation avancée React.js à distance', 'pending'),
-(3, 'Matériel', 'Nouveau Matériel', 3, 'Demande de renouvellement du poste de travail pour les tâches de design', 'pending'),
-(4, 'Congé', 'Congé Maladie', 4, 'Congé maladie de trois jours avec certificat médical', 'approved'),
-(5, 'Formation', 'Certification AWS', 5, 'Demande de prise en charge de la certification AWS Cloud Architect', 'denied');
+INSERT INTO `requests` (`id`, `type`, `name`, `empId`, `Description`, `state`, `fromDate`, `toDate`) VALUES 
+(1, 'Congé', 'Congé Aïd El Fitr', 1, 'Demande de congé pour les célébrations de l''Aïd avec la famille', 'approved', '2024-04-10', '2024-04-12'),
+(2, 'Formation', 'Formation React Advanced', 2, 'Demande de participation à la formation avancée React.js à distance', 'pending', NULL, NULL),
+(3, 'Matériel', 'Nouveau Matériel', 3, 'Demande de renouvellement du poste de travail pour les tâches de design', 'approved', NULL, NULL),
+(4, 'Congé', 'Congé Maladie', 4, 'Congé maladie de trois jours avec certificat médical', 'pending', '2024-05-15', '2024-05-17'),
+(5, 'Formation', 'Certification AWS', 5, 'Demande de prise en charge de la certification AWS Cloud Architect', 'denied', NULL, NULL);

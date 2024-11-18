@@ -17,6 +17,25 @@ services:
       - db
     restart: unless-stopped
 
+  flask:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./flask:/app
+    env_file:
+      - ./flask/.env
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DATABASE=optiwork
+    depends_on:
+      - db
+    restart: unless-stopped
+
   db:
     image: mariadb:latest
     environment:

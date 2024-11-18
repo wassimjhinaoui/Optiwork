@@ -84,6 +84,8 @@ model requests {
   empId       BigInt         @db.UnsignedBigInt
   type        String         @db.VarChar(255)
   state       requests_state
+  fromDate    DateTime?      @db.DateTime(0)
+  toDate      DateTime?      @db.DateTime(0)
   Description String         @db.VarChar(255)
   employees   employees      @relation(fields: [empId], references: [id], onUpdate: Restrict, map: "requests_empid_foreign")
 
