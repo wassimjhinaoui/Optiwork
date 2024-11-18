@@ -1,17 +1,10 @@
-# Use the official Node.js image as the base
-FROM node:18-alpine
+FROM node:18
 
-# Set the working directory
 WORKDIR /app
+COPY package*.json ./
+COPY . .
+RUN npm install
+RUN npm install -g prisma
 
-# Copy the project files
-COPY project .
-
-# Install dependencies
-RUN npm ci
-
-# Set the PATH environment variable to include the Next.js binary
-ENV PATH="/app/node_modules/.bin:${PATH}"
-
-# Start the NextJS application in development mode
-CMD ["npm", "run", "dev"]
+EXPOSE 3000
+CMD npm run dev

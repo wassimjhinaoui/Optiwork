@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Tasks {
+  id          BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  state       Tasks_state @default(pending)
+  weight      BigInt
+  empId       BigInt      @db.UnsignedBigInt
+  name        String      @db.VarChar(255)
+  description String      @db.VarChar(255)
+  employees   employees   @relation(fields: [empId], references: [id], onUpdate: Restrict, map: "tasks_empid_foreign")
+  dates       dates[]
+  skills      skills[]
+
+  @@index([empId], map: "tasks_empid_foreign")
+}
+
+model breaks {
+  id        BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  start     DateTime  @db.DateTime(0)
+  duration  DateTime  @db.Time(0)
+  end       DateTime  @db.DateTime(0)
+  empId     BigInt    @db.UnsignedBigInt
+  employees employees @relation(fields: [empId], references: [id], onUpdate: Restrict, map: "breaks_empid_foreign")
+
+  @@index([empId], map: "breaks_empid_foreign")
+}
+
+model dates {
+  id       BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  started  DateTime @db.DateTime(0)
+  finished DateTime @db.DateTime(0)
+  issued   DateTime @db.DateTime(0)
+  taskId   BigInt   @db.UnsignedBigInt
+  deadline DateTime @db.DateTime(0)
+  Tasks    Tasks    @relation(fields: [taskId], references: [id], onUpdate: Restrict, map: "dates_taskid_foreign")
+
+  @@index([taskId], map: "dates_taskid_foreign")
+}
+
+model employees {
+  id            BigInt          @id @default(autoincrement()) @db.UnsignedBigInt
+  Name          String          @db.VarChar(255)
+  email         String          @db.VarChar(255)
+  pass          String          @db.VarChar(255)
+  postId        BigInt?         @db.UnsignedBigInt
+  Tasks         Tasks[]
+  breaks        breaks[]
+  posts         posts?          @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "employees_postid_foreign")
+  mental_health mental_health[]
+  requests      requests[]
+  skills        skills[]
+
+  @@index([postId], map: "employees_postid_foreign")
+}
+
+model mental_health {
+  id        BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  status    Float     @db.Float
+  empId     BigInt    @db.UnsignedBigInt
+  date      DateTime  @db.DateTime(0)
+  reason    String?   @db.LongText
+  employees employees @relation(fields: [empId], references: [id], onUpdate: Restrict, map: "mental_health_empid_foreign")
+
+  @@index([empId], map: "mental_health_empid_foreign")
+}
+
+model posts {
+  id          BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  name        String      @db.VarChar(255)
+  description String      @db.VarChar(255)
+  employees   employees[]
+}
+
+model requests {
+  id          BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  name        String         @db.VarChar(255)
+  empId       BigInt         @db.UnsignedBigInt
+  type        String         @db.VarChar(255)
+  state       requests_state
+  Description String         @db.VarChar(255)
+  employees   employees      @relation(fields: [empId], references: [id], onUpdate: Restrict, map: "requests_empid_foreign")
+
+  @@index([empId], map: "requests_empid_foreign")
+}
+
+model skills {
+  id        BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+  taskId    BigInt?    @db.UnsignedBigInt
+  name      String     @db.VarChar(255)
+  empId     BigInt?    @db.UnsignedBigInt
+  employees employees? @relation(fields: [empId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "skills_empid_foreign")
+  Tasks     Tasks?     @relation(fields: [taskId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "skills_taskid_foreign")
+
+  @@index([empId], map: "skills_empid_foreign")
+  @@index([taskId], map: "skills_taskid_foreign")
+}
+
+enum Tasks_state {
+  pending
+  done
+  in_progress
+}
+
+enum requests_state {
+  pending
+  approved
+  denied
+}
