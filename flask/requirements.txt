@@ -1,7 +1,6 @@
 openai
 flask
-os 
-json
 langchain
 langchain_openai
-dotenv
+python-dotenv
+flask_cors

@@ -13,9 +13,13 @@ services:
       - /app/.next
     environment:
       - DATABASE_URL=mysql://root:rootpassword@db:3306/optiwork
+      - REACT_APP_API_URL=http://localhost:5000  # Add this to connect to Flask API
     depends_on:
       - db
+      - flask  # Add dependency on Flask service
     restart: unless-stopped
+    networks:
+      - app-network
 
   flask:
     build:
@@ -28,13 +32,12 @@ services:
     env_file:
       - ./flask/.env
     environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=rootpassword
-      - MYSQL_DATABASE=optiwork
+      - CORS_ORIGIN=http://localhost:3000  # Add CORS configuration
     depends_on:
       - db
     restart: unless-stopped
+    networks:
+      - app-network
 
   db:
     image: mariadb:latest
@@ -49,6 +52,12 @@ services:
     ports:
       - "3306:3306"
     restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   db_data:

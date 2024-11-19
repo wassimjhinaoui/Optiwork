@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import TaskAssignmentDialog from "@/components/manager/taskAssignmentDialog";
+
 import {
   Select,
   SelectContent,
@@ -32,62 +34,56 @@ import {
 import { EmployeePerformanceChart } from "@/components/manager/performance-chart";
 import { TaskManagement } from "@/components/manager/task-management";
 
+interface Employee {
+  id: string;
+  Name: string;
+  email: string;
+}
+
+
 export default function ManagerDashboard() {
   const [selectedEmployee, setSelectedEmployee] = useState<string>("all");
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [employees,setEmployees] = useState<Employee[]>([]);
 
-  const employees = [
-    {
-      id: 1,
-      name: "John Doe",
-      role: "Frontend Developer",
-      points: 850,
-      tasksCompleted: 15,
-      productivity: 92,
-      trend: "up",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      role: "Backend Developer",
-      points: 780,
-      tasksCompleted: 12,
-      productivity: 88,
-      trend: "down",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      role: "UI Designer",
-      points: 920,
-      tasksCompleted: 18,
-      productivity: 95,
-      trend: "up",
-    },
-  ];
+  
+
+  useEffect(()=>{
+    async function fetchEmployees() {
+      try {
+        const response = await fetch("/api/employees");
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.details || `HTTP error! status: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+        console.log("Fetched data:", data);
+        setEmployees(data);
+      } catch (error) {
+        console.error("Error details:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch requests"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEmployees()
+  },[])
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Manager Dashboard</h1>
-        <div className="flex items-center space-x-4">
-          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select Employee" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Employees</SelectItem>
-              {employees.map((employee) => (
-                <SelectItem key={employee.id} value={employee.id.toString()}>
-                  {employee.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button>
-            <Target className="mr-2 h-4 w-4" />
-            Assign Task
-          </Button>
-        </div>
+        <TaskAssignmentDialog employees_raw={employees} />
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">

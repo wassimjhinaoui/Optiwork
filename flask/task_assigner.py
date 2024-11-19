@@ -7,10 +7,6 @@ from langchain_openai import AzureChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from dotenv import load_dotenv
 
-def load_task(task_template):
-    # Task template integrated directly into the code
-   
-    return task
 def generate_prompt(task, employees):
     employee_info = "\n".join([
         f"{emp['id']}: {emp['name']}, Skills: {', '.join(emp['skills'])}, Available: {emp['availability']}"
@@ -28,7 +24,7 @@ Additional Notes: {task['additional_notes']}
 Available Employees:
 {employee_info}
 
-Assign the two best-suited employees for this task. Estimate the weight (1-10), time in hours, and provide a deadline (YYYY-MM-DD). Return the result as a JSON with the following keys: task_name, assigned_employees (list of employee ids), estimated_weight, estimated_time, deadline.
+Assign the two best-suited employees for this task. Estimate the weight (1-10), time in hours, and provide a deadline (YYYY-MM-DD). Return the result as a JSON and onlu JSON(i dont want any explanaitions or paragraphs) with the following keys: task_name, assigned_employees (list of employee ids), estimated_weight, estimated_time, deadline.
 """
     return prompt
 def get_assignment(prompt):
@@ -51,9 +47,3 @@ chat_model = AzureChatOpenAI(
     deployment_name=os.getenv("DEPLOYMENT_NAME"),
     openai_api_version=os.getenv("OPENAI_API_VERSION")
 )
-task = load_task()
-prompt = generate_prompt(task, employees)
-assignment = get_assignment(prompt)
-if assignment:
-    print("Assignment Result:")
-    print(assignment)
