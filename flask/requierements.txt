@@ -1,0 +1,7 @@
+openai
+flask
+os 
+json
+langchain
+langchain_openai
+dotenv
