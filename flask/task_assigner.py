@@ -7,14 +7,9 @@ from langchain_openai import AzureChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from dotenv import load_dotenv
 
-def load_task():
+def load_task(task_template):
     # Task template integrated directly into the code
-    task = {
-        "task_name": "Implement Feature X",
-        "task_description": "Develop and integrate Feature X into the existing system. The feature should allow users to do Y and Z.",
-        "required_skills": ["Python", "REST API"],
-        "additional_notes": "Please ensure the feature is scalable and includes unit tests."
-    }
+   
     return task
 def generate_prompt(task, employees):
     employee_info = "\n".join([
