@@ -4,8 +4,7 @@ import { Progress } from "@/components/ui/progress";
 interface TaskCardProps {
   title: string;
   progress: number;
-  weight: "High" | "Medium" | "Low";
-  points:number;
+  weight: number;
 }
 
 export default function TaskCard({ title, progress, weight,points }: TaskCardProps) {
@@ -16,14 +15,18 @@ export default function TaskCard({ title, progress, weight,points }: TaskCardPro
           <CardTitle className="text-lg">{title}</CardTitle>
           <span
             className={`text-sm ${
-              weight === "High"
+              weight >= 7
                 ? "text-red-500"
-                : weight === "Medium"
+                : weight >= 4
                 ? "text-yellow-500"
                 : "text-green-500"
             }`}
           >
-            {weight}
+            {weight >= 7
+                        ? "High"
+                        : weight >= 4
+                        ? "medium"
+                        : "low"}
           </span>
         </div>
       </CardHeader>
@@ -36,7 +39,7 @@ export default function TaskCard({ title, progress, weight,points }: TaskCardPro
           <Progress value={progress} />
           <div className="flex items-center justify-between text-sm">
             <span>Value:</span>
-            <span>{points}</span>
+            <span>{weight}</span>
           </div>
         </div>
       </CardContent>

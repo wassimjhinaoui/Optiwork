@@ -40,24 +40,19 @@ def assign_task():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-"""
-
 @app.route('/recommend_task', methods=['POST'])
 def recommend_task():
     
-    Endpoint to recommend tasks based on input and ranking logic.
-    
     try:
-        # Fetch tasks from the database
-        tasks_db = get_tasks_from_db()
-
-        if not tasks_db:
-            return jsonify({"error": "No tasks available in the database"}), 404
-
+     
         # Generate prompt and get task ranking
-        prompt = recommend_generate_prompt(tasks_db)
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid input, JSON payload required"}), 400
+        
+        tasks = data.get('tasks')
+        print(tasks)
+        prompt = recommend_generate_prompt(tasks)
         ranking = get_rank(prompt)
 
         if ranking:
@@ -68,5 +63,9 @@ def recommend_task():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
+
 if __name__ == '__main__':
-    app.run(debug=True)"""
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+

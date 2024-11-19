@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Brain, GamepadIcon, MessageCircle, Timer } from "lucide-react";
+import { Brain, GamepadIcon, MessageCircle, Timer,X } from "lucide-react";
+
+import React, { useState } from 'react';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const breakRooms = {
   meditation: {
@@ -21,7 +24,53 @@ const breakRooms = {
   },
 };
 
+
+
+const meditationVideos = [
+  {
+    id: 1,
+    title: "5 Minute Meditation",
+    url: "https://www.youtube.com/embed/inpok4MKVLM"
+  },
+  {
+    id: 2,
+    title: "10 Minute Mindfulness",
+    url: "https://www.youtube.com/embed/ZToicYcHIOU"
+  },
+  {
+    id: 3,
+    title: "15 Minute Deep Relaxation",
+    url: "https://www.youtube.com/embed/z6X5oEIg6Ak"
+  }
+];
+
+const VideoDialog = ({ isOpen, onClose, videoUrl }) => (
+  <Dialog open={isOpen} onOpenChange={onClose}>
+    <DialogContent className="max-w-[100vw] max-h-[100vh] h-[100vh] w-[100vw] p-0">
+      <div className="relative w-full h-full">
+        <Button 
+          variant="ghost" 
+          className="absolute top-4 right-4 z-50"
+          onClick={onClose}
+        >
+          <X className="h-6 w-6" />
+        </Button>
+        <iframe
+          src={videoUrl}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
+    </DialogContent>
+  </Dialog>
+);
+
+
 export default function BreakRoom() {
+
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(meditationVideos[0]);
   return (
     <Card>
       <CardHeader>
@@ -43,8 +92,25 @@ export default function BreakRoom() {
                   <p className="text-sm text-muted-foreground">{room.description}</p>
                 </div>
               </div>
+              {key === "meditation" && (
+                <div className="grid grid-cols-3 gap-2 my-4">
+                  {meditationVideos.map((video) => (
+                    <Button
+                      key={video.id}
+                      variant={selectedVideo.id === video.id ? "default" : "outline"}
+                      onClick={() => setSelectedVideo(video)}
+                      className="w-full"
+                    >
+                      {video.title}
+                    </Button>
+                  ))}
+                </div>
+              )}
               <div className="grid gap-4">
-                <Button className="w-full">
+                <Button 
+                  className="w-full" 
+                  onClick={() => key === "meditation" && setIsVideoOpen(true)}
+                >
                   <Timer className="mr-2 h-4 w-4" />
                   Start {key === "meditation" ? "Session" : key === "games" ? "Game" : "Chat"}
                 </Button>
@@ -52,6 +118,11 @@ export default function BreakRoom() {
             </TabsContent>
           ))}
         </Tabs>
+        <VideoDialog 
+          isOpen={isVideoOpen}
+          onClose={() => setIsVideoOpen(false)}
+          videoUrl={selectedVideo.url}
+        />
       </CardContent>
     </Card>
   );

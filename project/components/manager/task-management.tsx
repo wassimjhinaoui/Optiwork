@@ -20,34 +20,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const tasks = [
-  {
-    id: 1,
-    title: "Implement new feature",
-    assignee: "John Doe",
-    priority: "High",
-    status: "In Progress",
-    weight: 8,
-  },
-  {
-    id: 2,
-    title: "Code review",
-    assignee: "Jane Smith",
-    priority: "Medium",
-    status: "Pending",
-    weight: 5,
-  },
-  {
-    id: 3,
-    title: "Update documentation",
-    assignee: "Mike Johnson",
-    priority: "Low",
-    status: "Completed",
-    weight: 3,
-  },
-];
 
-export function TaskManagement() {
+export function TaskManagement({tasks}) {
+  console.log(tasks);
   const [filter, setFilter] = useState("all");
 
   const filteredTasks =
@@ -89,33 +64,39 @@ export function TaskManagement() {
           <TableBody>
             {filteredTasks.map((task) => (
               <TableRow key={task.id}>
-                <TableCell className="font-medium">{task.title}</TableCell>
-                <TableCell>{task.assignee}</TableCell>
+                <TableCell className="font-medium">{task.name}</TableCell>
+                <TableCell>{task.employees.Name}</TableCell>
                 <TableCell>
                   <Badge
                     variant={
-                      task.priority === "High"
+                      task.weight >= 7
                         ? "destructive"
-                        : task.priority === "Medium"
+                        : task.weight >= 4
                         ? "default"
                         : "secondary"
                     }
                   >
-                    {task.priority}
+                    {
+                      task.weight >= 7
+                        ? "High"
+                        : task.weight >= 4
+                        ? "medium"
+                        : "low"
+                    }
                   </Badge>
                 </TableCell>
                 <TableCell>{task.weight}</TableCell>
                 <TableCell>
                   <Badge
                     variant={
-                      task.status === "Completed"
+                      task.state === "done"
                         ? "default"
-                        : task.status === "In Progress"
+                        : task.state === "in_progress"
                         ? "secondary"
                         : "outline"
                     }
                   >
-                    {task.status}
+                    {task.state}
                   </Badge>
                 </TableCell>
                 <TableCell>

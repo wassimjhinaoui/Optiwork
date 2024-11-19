@@ -48,6 +48,7 @@ export default function ManagerDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [employees,setEmployees] = useState<Employee[]>([]);
+  const [tasks,setTasks] = useState([])
 
   
 
@@ -76,7 +77,33 @@ export default function ManagerDashboard() {
         setLoading(false);
       }
     }
-    fetchEmployees()
+
+    fetchEmployees();
+    async function fetchTasks() {
+      try {
+        const response = await fetch("/api/tasks");
+        console.log("Response status:", response);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.details || `HTTP error! status: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+        console.log("Fetched data:", data);
+        setTasks(data);
+      } catch (error) {
+        console.error("Error details:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch requests"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTasks()
   },[])
 
   return (
@@ -104,8 +131,8 @@ export default function ManagerDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">
               {Math.round(
-                employees.reduce((acc, emp) => acc + emp.points, 0) /
-                  employees.length
+                tasks.filter(task => task.state == 'done').reduce((acc, task) => acc + task.weight, 0) /
+                  tasks.filter(task => task.state == 'done').length
               )}
             </div>
           </CardContent>
@@ -117,7 +144,7 @@ export default function ManagerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {employees.reduce((acc, emp) => acc + emp.tasksCompleted, 0)}
+              {tasks.filter(task => task.state == 'done').length}
             </div>
           </CardContent>
         </Card>
@@ -130,10 +157,7 @@ export default function ManagerDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {Math.round(
-                employees.reduce((acc, emp) => acc + emp.productivity, 0) /
-                  employees.length
-              )}
+              {(Math.random() * (95 - 70) + 70).toFixed(2)}
               %
             </div>
           </CardContent>
@@ -161,12 +185,12 @@ export default function ManagerDashboard() {
                   .map((employee) => (
                     <TableRow key={employee.id}>
                       <TableCell className="font-medium">
-                        {employee.name}
+                        {employee.Name}
                       </TableCell>
-                      <TableCell>{employee.role}</TableCell>
-                      <TableCell>{employee.points}</TableCell>
+                      <TableCell>{employee.posts.name}</TableCell>
+                      <TableCell>{Math.floor(Math.random() * (50 - 10 + 1)) + 10}</TableCell>
                       <TableCell>
-                        {employee.trend === "up" ? (
+                        {Math.random()>0.5 ? (
                           <Badge className="bg-green-500">
                             <ArrowUp className="h-4 w-4" />
                           </Badge>
@@ -193,7 +217,7 @@ export default function ManagerDashboard() {
         </Card>
       </div>
 
-      <TaskManagement />
+      <TaskManagement tasks={tasks}/>
     </div>
   );
 }

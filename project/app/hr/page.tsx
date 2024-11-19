@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, Users, BarChart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { MentalHealthChart } from "@/components/hr/mentalhealth-chart";
 
 
 interface Employee {
@@ -123,16 +124,10 @@ export default function HRPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">HR Dashboard</h1>
-        <Button>
-          <Users className="mr-2 h-4 w-4" />
-          Add Employee
-        </Button>
-      </div>
+      
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card >
           <CardHeader>
             <CardTitle>Leave Calendar</CardTitle>
           </CardHeader>
@@ -145,7 +140,14 @@ export default function HRPage() {
             />
           </CardContent>
         </Card>
-
+        <Card>
+          <CardHeader>
+            <CardTitle>Performance Analytics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MentalHealthChart />
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>Team Overview</CardTitle>

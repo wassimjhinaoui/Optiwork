@@ -6,21 +6,11 @@ from langchain_openai import AzureChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from dotenv import load_dotenv
 
-def load_tasks():
-    # Task template integrated directly into the code
-    ass_tasks  = {
-        "tasks": [
-            {"id": 1, "weight": 5, "estimated_time": "2 hours", "deadline": "2023-12-01"},
-            {"id": 2, "weight": 3, "estimated_time": "1 hour", "deadline": "2023-12-02"},
-            {"id": 3, "weight": 8, "estimated_time": "4 hours", "deadline": "2023-12-03"},
-            # Add more tasks as needed
-        ]
-    }
-    return ass_tasks
+
 def generate_prompt(task):
     tasks_info = "\n".join([
-        f"Task ID: {t['id']}, Weight: {t['weight']}, Estimated Time: {t['estimated_time']}, Deadline: {t['deadline']}"
-        for t in task['tasks']
+        f"Task ID: {t['id']}, Weight: {t['weight']}, description: {t['description']}, Deadline: {t['deadline']}"
+        for t in task
     ])
     
 
@@ -33,7 +23,8 @@ Tasks Details:
 
 
 
-Sort tasks through tasks details by wich one the employee start with. Estimate the best to start with and the all in rank. Return the result as a JSON with the following keys: task_n while n is the number of the task by rank and the value is the task id
+Sort tasks through tasks details by wich one the employee should start with. Estimate the best to start with and the all in rank. Return the result as a JSON with the following keys: task_rank which is is the rank of the task and the task_id is the task id
+Urgent : the output must only contain json because i have to extract it
 """
     return prompt
 def get_rank(prompt):
@@ -56,9 +47,3 @@ chat_model = AzureChatOpenAI(
     deployment_name=os.getenv("DEPLOYMENT_NAME"),
     openai_api_version=os.getenv("OPENAI_API_VERSION")
 )
-task = load_tasks()
-prompt = generate_prompt(task)
-rank = get_rank(prompt)
-if rank:
-    print("rank Result:")
-    print(rank)

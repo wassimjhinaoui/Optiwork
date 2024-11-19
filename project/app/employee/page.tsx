@@ -6,14 +6,109 @@ import BreakRoom from "@/components/employee/break-room";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const tasks = [
-  { id: 1, title: "Complete project documentation", points: Math.floor(Math.random() * 100)+50,progress: Math.floor(Math.random() * 100), weight: "High" },
-  { id: 2, title: "Review code changes", points: Math.floor(Math.random() * 100)+50,progress: Math.floor(Math.random() * 100), weight: "Medium" },
-  { id: 3, title: "Team meeting preparation", points: Math.floor(Math.random() * 100)+50,progress: Math.floor(Math.random() * 100), weight: "Low" },
-] as const;
+function getDayPercentage(issuedTime, deadline) {
+  // Convert datetime strings to Date objects
+  const issued = new Date(issuedTime);
+  const end = new Date(deadline);
+  const today = new Date();
+  
+  // Normalize today's date to the start of the day (midnight)
+  today.setHours(0, 0, 0, 0);
+  
+  // Normalize the issued and deadline times to the start of their respective days
+  issued.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+
+  // Calculate the total time between issued time and deadline in milliseconds
+  const totalDuration = end - issued;
+  if (totalDuration <= 0) {
+      throw new Error('Deadline must be later than issued time');
+  }
+
+  // Calculate the time passed since issued time until today
+  const elapsedTime = today - issued;
+
+  // Calculate the percentage of the day completed
+  const percentage = ((elapsedTime / totalDuration) * 100).toFixed(2);
+
+  // Ensure that we return 0 if today's date is before the issued time
+  return Math.max(0, Math.min(100, parseFloat(percentage)));
+}
+
+
+function formatTasks(tasks){
+ return tasks.map(task =>({"id":task.id,"weight":task.weight,"description":task.description,"deadline":task.dates[0].deadline}))
+}
 
 export default function EmployeeDashboard() {
+
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tasks,setTasks] = useState([])
+  const employeeId = 1
+
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        // Fetch tasks for the employee
+        const response = await fetch(`/api/tasks/employee/${employeeId}`);
+        console.log("Response status:", response);
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.details || `HTTP error! status: ${response.status}`
+          );
+        }
+  
+        const data = await response.json();
+        console.log("Fetched data:", data);
+  
+        // Communicate with the AI
+        try {
+          const aiResponse = await fetch("http://localhost:5000/recommend_task", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+            },
+            body: JSON.stringify({
+              tasks: formatTasks(data),
+            }),
+          });
+  
+          console.log("AI Response:", aiResponse);
+  
+          if (aiResponse.ok) {
+            const result = await aiResponse.json();
+            console.log("AI Processed Result:", result);
+          } else {
+            console.error("Failed to get AI recommendation:", aiResponse.statusText);
+          }
+        } catch (aiError) {
+          console.error("Error communicating with AI:", aiError);
+        }
+  
+        // Set tasks in state
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch tasks"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  
+    fetchTasks();
+  }, [employeeId]);
+  
+
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -25,10 +120,9 @@ export default function EmployeeDashboard() {
         {tasks.map((task) => (
           <TaskCard
             key={task.id}
-            title={task.title}
-            progress={task.progress}
+            title={task.name}
+            progress={getDayPercentage(task.dates[0].issued,task.dates[0].deadline)}
             weight={task.weight}
-            points={task.points}
           />
         ))}
       </div>
