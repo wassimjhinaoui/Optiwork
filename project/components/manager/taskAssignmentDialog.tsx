@@ -54,7 +54,7 @@ const TaskAssignmentDialog = ({ employees_raw }) => {
     
     // Send to API to get best-fit employees
     try {
-      const response = await fetch("http://localhost:5000/assign_task", {
+      const response = await fetch("http://flask:5000/assign_task", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ const TaskAssignmentDialog = ({ employees_raw }) => {
     console.log(finalTaskData)
     try {
       // Send final task data to your database
-      const response = await fetch("http://localhost:5000/save_task", {
+      const response = await fetch("/api/tasks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

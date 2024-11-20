@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 
 services:
   web:
@@ -13,10 +13,10 @@ services:
       - /app/.next
     environment:
       - DATABASE_URL=mysql://root:rootpassword@db:3306/optiwork
-      - REACT_APP_API_URL=http://localhost:5000  # Add this to connect to Flask API
+      - REACT_APP_API_URL=http://flask:5000 
     depends_on:
       - db
-      - flask  # Add dependency on Flask service
+      - flask 
     restart: unless-stopped
     networks:
       - app-network
@@ -32,7 +32,7 @@ services:
     env_file:
       - ./flask/.env
     environment:
-      - CORS_ORIGIN=http://localhost:3000  # Add CORS configuration
+      - CORS_ORIGIN=http://web:3000  
     depends_on:
       - db
     restart: unless-stopped

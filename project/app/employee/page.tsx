@@ -69,7 +69,7 @@ export default function EmployeeDashboard() {
   
         // Communicate with the AI
         try {
-          const aiResponse = await fetch("http://localhost:5000/recommend_task", {
+          const aiResponse = await fetch("http://flask:5000/recommend_task", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
