@@ -53,7 +53,7 @@ export async function POST(req: Request) {
           create: {
             started: new Date(),
             finished: new Date(), // Will be updated when task is done
-            issued: new Date(body.created_at || new Date()),
+            issued: new Date(),
             deadline: new Date(body.deadline)
           }
         },

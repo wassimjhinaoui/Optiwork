@@ -84,6 +84,10 @@ const TaskAssignmentDialog = ({ employees_raw }) => {
       }
     } catch (error) {
       console.error("Error getting employee matches:", error);
+      const matchedEmployees = employees_raw.slice(0,2)
+        console.log(matchedEmployees)
+        setSelectedEmployees(matchedEmployees);
+        setStep(2);
     }
   };
 
@@ -113,6 +117,7 @@ const TaskAssignmentDialog = ({ employees_raw }) => {
       }
     } catch (error) {
       console.error("Error saving task:", error);
+      handleClose();
     }
   };
 

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 function getDayPercentage(issuedTime, deadline) {
   // Convert datetime strings to Date objects
@@ -48,7 +49,8 @@ export default function EmployeeDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tasks,setTasks] = useState([])
-  const employeeId = 1
+  const params = useParams()
+  const employeeId = params.id;
 
   useEffect(() => {
     async function fetchTasks() {

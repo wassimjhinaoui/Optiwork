@@ -5,6 +5,7 @@ import { Brain, GamepadIcon, MessageCircle, Timer,X } from "lucide-react";
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { redirect } from "next/navigation";
 
 const breakRooms = {
   meditation: {
@@ -43,6 +44,11 @@ const meditationVideos = [
     url: "https://www.youtube.com/embed/z6X5oEIg6Ak"
   }
 ];
+
+const sendToMiniGames= ()=>{
+  console.log("here");
+window.open('https://www.proprofsgames.com/', '_blank');
+}
 
 const VideoDialog = ({ isOpen, onClose, videoUrl }) => (
   <Dialog open={isOpen} onOpenChange={onClose}>
@@ -109,7 +115,7 @@ export default function BreakRoom() {
               <div className="grid gap-4">
                 <Button 
                   className="w-full" 
-                  onClick={() => key === "meditation" && setIsVideoOpen(true)}
+                  onClick={() => key === "meditation" ? setIsVideoOpen(true) : sendToMiniGames()}
                 >
                   <Timer className="mr-2 h-4 w-4" />
                   Start {key === "meditation" ? "Session" : key === "games" ? "Game" : "Chat"}

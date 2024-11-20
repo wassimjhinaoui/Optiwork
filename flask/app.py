@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 # Configure CORS properly
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/assign_task', methods=['POST', 'OPTIONS'])
 @cross_origin()
 def assign_task():

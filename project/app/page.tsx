@@ -40,7 +40,7 @@ export default function Home() {
       icon: UserCircle,
       title: "Employee Dashboard",
       description: "Track your work hours, manage tasks, and stay productive.",
-      href: "/employee",
+      href: "/employee/1",
     },
     {
       icon: Users,
